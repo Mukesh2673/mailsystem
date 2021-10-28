@@ -5,7 +5,7 @@ var cors=require('cors');
 app.use(cors());
 db=require('./db');
 var router=express.Router();
-router.get('/getapi',(req,res)=>{
+/* router.get('/getapi',(req,res)=>{
     res.send("user get api");
 })
 router.post('/ins',(req,res)=>{
@@ -13,7 +13,7 @@ router.post('/ins',(req,res)=>{
     console.log("email: "+req);
     res.json({"status":"inserted successfull"});
 })
-
+ */
 router.post('/signup',async(req,res)=>{
 //console.log(req.body.name);
 const salt=await bcrypt.genSalt(10);
@@ -40,6 +40,26 @@ router.post('/signin',(req,res)=>{
 db.user_signin(loginobj,req.body.password,res);
 });
 
+
+/* ----------------------------insert Available slot------------------- */
+router.post('/availableslot',(req,res)=>{
+    //console.log(req.body);
+
+    db.insertslot(req.body,res);
+    res.send('get data');
+})
+
+router.get('/allslot',(req,res)=>{
+
+    //db.insertslot(req.body,res);
+    db.allslot(res);
+})
+/* -------------------------------------delete Available slot------------------ */
+router.delete('/deleteslot',(req,res)=>{
+   var slotid=req.body
+
+  db.deleteslot(slotid,res);
+})
 
 
 

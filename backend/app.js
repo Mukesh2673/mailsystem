@@ -3,11 +3,11 @@ var bodyParser=require('body-parser')
 var cors=require('cors');
 var app=express()
 app.use(cors())
-const port=1000
+const port=1100
 var db=require('./db');
 var user_r=require('./router');
-var Category_r=require('./cat-router');
-
+//var Category_r=require('./cat-router');
+//var doctor=require('./router');
 
 
 app.use(bodyParser.urlencoded({
@@ -32,5 +32,4 @@ db.insertuser();
 res.send("inserted");
 })
 app.use("/user",user_r);
-app.use("/category",Category_r);
 
