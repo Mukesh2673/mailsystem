@@ -4,6 +4,7 @@ const bcrypt=require('bcrypt');
 var cors=require('cors');
 app.use(cors());
 db=require('./db');
+var Objectid = require('mongodb').ObjectID;
 var router=express.Router();
 /* router.get('/getapi',(req,res)=>{
     res.send("user get api");
@@ -43,27 +44,33 @@ db.user_signin(loginobj,req.body.password,res);
 
 /* ----------------------------insert Available slot------------------- */
 router.post('/availableslot',(req,res)=>{
-    //console.log(req.body);
 
     db.insertslot(req.body,res);
-    res.send('get data');
+ 
 })
 
 router.get('/allslot',(req,res)=>{
 
-    //db.insertslot(req.body,res);
+
     db.allslot(res);
 })
 /* -------------------------------------delete Available slot------------------ */
 router.delete('/deleteslot',(req,res)=>{
-   var slotid=req.body
+var slotid=req.body._id
 
+var slotid={
+    "_id": Objectid(slotid)
+}
   db.deleteslot(slotid,res);
 })
 
-
-
-
+/* ----------------------------------------------Book Data--------------------------- */
+router.patch('/bookslot',(req,res)=>{
+    var slotid=req.body.data
+    var bookedid=Objectid(slotid.id._id);
+    var userdetails=slotid.name;
+      db.bookslot(bookedid,userdetails,res);
+    })
 
 
 

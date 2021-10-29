@@ -57,12 +57,13 @@ db.collection("patients").insertOne(insobj,function(err,res){
 
 }
 
-exports.insertslot=function(slotobj){
-db.collection("SlotManagement").insertOne(slotobj,function(err,res){
-  if(err) 
-  {
-    throw err
-  }
+exports.insertslot=function(slotobj,res){
+db.collection("SlotManagement").insertOne(slotobj,function(err){
+  if(err) throw err
+  db.collection("SlotManagement").find().toArray(function(err,result){
+
+    res.send(result);
+    })
 
   })
 }
@@ -76,9 +77,8 @@ if(err){
 }
 else
 {
-  //console.log(result);
+
   slotobj.send(result);
- // slotobj.send(result);
 }
 
 })
@@ -86,16 +86,29 @@ else
 /* ---------------------delete slot-------------------------- */
 exports.deleteslot=function(slotid,res)
 {
-
-
-
-console.log(slotid._id)
-  console.log('ObjectId("'+slotid._id+'")');
 db.collection("SlotManagement").deleteMany(slotid,function(err,obj){
   if (err) throw err;
-  console.log("1 document deleted");
+  db.collection("SlotManagement").find().toArray(function(err,result){
+
+  res.send(result);
+  })
 });
 }
+/* ------------------------book slot------------------------------- */
+exports.bookslot=function(bookid,userdetails,res)
+{
+console.log(bookid);
+
+
+db.collection("SlotManagement").updateMany(
+  {_id:bookid},
+  {$set:{
+    slottype:"booked"
+  }
+
+}
+
+)}
 
 
 
@@ -103,6 +116,8 @@ db.collection("SlotManagement").deleteMany(slotid,function(err,obj){
 
 
 
+
+/* ---------------------------------signin slot-------------------------- */
 
 exports.user_signin=function(uobj,pass,outp){
 db.collection("patients").find(uobj).toArray(function(err,result){
