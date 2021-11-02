@@ -48,12 +48,32 @@ router.post('/availableslot',(req,res)=>{
     db.insertslot(req.body,res);
  
 })
-
+/* ----------------------------get All slot------------------- */
 router.get('/allslot',(req,res)=>{
 
 
     db.allslot(res);
 })
+/* ----------------------------get Available slot------------------- */
+router.get('/availableslot',(req,res)=>{
+
+
+    db.availableslot(res);
+})
+/* ----------------------------get booked slot------------------- */
+router.get('/bookedslot',(req,res)=>{
+
+
+    db.bookedslot(res);
+})
+
+
+
+
+
+
+
+
 /* -------------------------------------delete Available slot------------------ */
 router.delete('/deleteslot',(req,res)=>{
 var slotid=req.body._id

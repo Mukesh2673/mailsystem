@@ -1,5 +1,6 @@
 var MongoClient = require('mongodb').MongoClient
 var bcrypt=require('bcrypt');
+
 MongoClient.connect('mongodb://localhost:27017/patients', function (err, client) {
   if (err) throw err
 
@@ -68,7 +69,7 @@ db.collection("SlotManagement").insertOne(slotobj,function(err){
   })
 }
 
-/* ------------get all  slot-------------------------- */
+/* ------------get all  slot-------------------------------------- */
 
 exports.allslot=function(slotobj){
 db.collection("SlotManagement").find().toArray(function(err,result){
@@ -83,13 +84,42 @@ else
 
 })
 }
+/*----------------------get Available slot---------------------------- */
+exports.availableslot=function(slotobj){
+  db.collection("SlotManagement").find({slottype:"available"}).toArray(function(err,result){
+  if(err){
+    throw err;
+  }
+  else
+  {
+  
+    slotobj.send(result);
+  }
+  
+  })
+  }
+/*----------------------get Booked slot------------------------------------ */
+exports.bookedslot=function(slotobj){
+  db.collection("SlotManagement").find({slottype:"booked"}).toArray(function(err,result){
+  if(err){
+    throw err;
+  }
+  else
+  {
+  
+    slotobj.send(result);
+  }
+  
+  })
+  }
+
 /* ---------------------delete slot-------------------------- */
 exports.deleteslot=function(slotid,res)
 {
 db.collection("SlotManagement").deleteMany(slotid,function(err,obj){
   if (err) throw err;
-  db.collection("SlotManagement").find().toArray(function(err,result){
-
+  db.collection("SlotManagement").find({slottype:"available"}).toArray(function(err,result){
+   
   res.send(result);
   })
 });
@@ -97,18 +127,20 @@ db.collection("SlotManagement").deleteMany(slotid,function(err,obj){
 /* ------------------------book slot------------------------------- */
 exports.bookslot=function(bookid,userdetails,res)
 {
-console.log(bookid);
-
-
 db.collection("SlotManagement").updateMany(
   {_id:bookid},
   {$set:{
-    slottype:"booked"
+    slottype:"booked",
+    name:userdetails.name,
+    email:userdetails.email,
+    phone:userdetails.phone
   }
-
 }
 
-)}
+)
+
+
+}
 
 
 
