@@ -45,7 +45,84 @@ db.user_signin(loginobj,req.body.password,res);
 /* ----------------------------insert Available slot------------------- */
 router.post('/availableslot',(req,res)=>{
 
-    db.insertslot(req.body,res);
+   var starttime=req.body.start;
+   var endtime=req.body.end;
+   var slot=req.body.slot;
+   
+ starttimehours=parseInt(starttime.slice(0,2));
+
+starttimeminute=parseInt(starttime.slice(3,5));
+
+sm=starttimehours*60+starttimeminute
+
+
+endtimehours=parseInt(endtime.slice(0,2));
+
+endtimeminute=parseInt(endtime.slice(3,5));
+em=endtimehours*60+endtimeminute
+
+totalminutes=em-sm
+
+loop=Math.trunc(totalminutes/slot)
+
+
+for(var i=1;i<=loop;i++)
+{
+  
+ var m1=starttimeminute+i*slot;
+
+
+ if(m1>60)
+ {
+    starttimehours=starttimehours+1;
+m1=m1%60
+console.log(m1)
+
+var k=parseInt(slot);
+
+
+
+
+if(m1==0)
+{
+    m1='00'
+}
+else if(m1<10)
+{
+    m1='0'+m1
+}
+
+
+
+}
+
+console.log(starttimehours+':'+m1);
+
+ 
+
+
+
+
+}
+
+
+
+/* date.setMinutes(23)
+var a=[]
+for(var i=1;i<8;i++)
+{
+    var m1=i*15;
+    date.setMinutes(m1)
+    a.push(date.toString().slice(16,21));
+    //console.log( date.toString().slice(16,21))
+  
+}
+for(var i=0;i<=a.length-2;i++)
+{
+    console.log(a[i]+'-'+a[i+1]);
+}
+ */
+    // db.insertslot(req.body,res);
  
 })
 /* ----------------------------get All slot------------------- */
