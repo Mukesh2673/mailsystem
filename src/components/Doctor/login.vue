@@ -21,14 +21,17 @@
 <script>
 import NavHeader from './Header.vue'
 import axios from 'axios'
-export default {
+import router from 'vue-router'
+ export default {
     name:'Login',
     data()
     {
+
         return {
             username:'',
             password:'',
             store:null,
+            sts:'fd'
 
        
         };

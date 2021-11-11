@@ -24,7 +24,7 @@ export default {
       selectedate:"",
       endtime:"",
       selected:"15",
- 
+      id:"",
    
      
 
@@ -53,13 +53,14 @@ export default {
             dayMaxEventRows: 5, // adjust to 6 only for timeGridWeek/timeGridDay
           },
         },
+        
       },
     };
   },
   methods: {
     handleDateClick: function (arg) {
         this.starttime=arg.dateStr.slice(11,16);
-        console.log(this.starttime)
+  
         var hours=parseInt(this.starttime.slice(0,2));
         var minute=parseInt(this.starttime.slice(3,5));
         var date = new Date();
@@ -67,7 +68,7 @@ export default {
         minute = minute + 15;
         date.setMinutes(minute);
         this.endtime = date.toString().slice(16, 21);
-        console.log(this.endtime)
+    
 
   
   
@@ -88,18 +89,17 @@ export default {
       this.showToggle2 = "block";
 },
     handleeventClick: function (info) {
-      this.starttime = info.event.start;
+      this.id=info.event.extendedProps._id;
       this.showToggle = "block";
-    
-    },
+
+},
      getstarttime(event) {
       this.starttime = event.target.value;
-      console.log(this.starttime)
-      console.log(this.selected)
+
     },
 getendtime(event){
    this.endtime = event.target.value;
-      console.log(this.endtime)
+      
 },
 
 
@@ -110,6 +110,31 @@ getendtime(event){
         this.calendarOptions.events.push(...res.data)
       });
     },
+    
+  async deleteevent(){
+
+      var id =  { _id: this.id }
+    
+
+    this.showToggle='none';
+
+      await axios.delete("http://localhost:1100/user/deleteslot", { data: id })
+        .then((res) => {
+     
+            if(res.status==200){
+        
+                this.allslote=res.data
+                 this.calendarOptions.events=res.data
+                
+            } 
+        });
+    },
+ 
+
+
+
+
+
 
 
  async sendeventt(){
@@ -127,6 +152,16 @@ getendtime(event){
         .then((res) => {
           this.allslote = res.data;
           this.c = true;
+          if(res.status==200)
+          {
+           console.log(res.data);
+           //updating events
+           this.calendarOptions.events=res.data
+           this.showToggle2 = "none";
+      
+
+
+          }
         }); 
     },
 
@@ -141,7 +176,7 @@ getendtime(event){
       return [Object.assign({}, this.events3)];
     },
     datestring(){
-      console.log(this.selectedate)
+  
       return this.selectedate
     },
     startime(){
@@ -150,7 +185,8 @@ getendtime(event){
 entime(){
      
           return this.endtime;
-    }
+    },
+  
 
   },
   created: function () {
@@ -194,10 +230,11 @@ entime(){
               <div class="modal-body">
                 <h5 class="modal-title w-100" id="exampleModalLabel">
                   Are You Sure Delete This Events
+                  
                 </h5>
               </div>
               <div class="modal-footer">
-              <button type="button" class="btn btn-primary" @click="showToggle = 'none'">Yes</button>
+              <button type="button" class="btn btn-primary" @click="deleteevent">Yes</button>
                 <button type="button" class="btn btn-primary" @click="showToggle = 'none'">No</button>
               </div>
             </div>
