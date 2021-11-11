@@ -116,10 +116,9 @@ exports.bookedslot=function(slotobj){
 /* ---------------------delete slot-------------------------- */
 exports.deleteslot=function(slotid,res)
 {
-db.collection("SlotManagement").deleteMany(slotid,function(err,obj){
+db.collection("SlotManagement").deleteOne(slotid,function(err,obj){
   if (err) throw err;
-  db.collection("SlotManagement").find({slottype:"available"}).toArray(function(err,result){
-   
+  db.collection("SlotManagement").find().toArray(function(err,result){
   res.send(result);
   })
 });

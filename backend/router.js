@@ -45,86 +45,115 @@ db.user_signin(loginobj,req.body.password,res);
 /* ----------------------------insert Available slot------------------- */
 router.post('/availableslot',(req,res)=>{
 
-   var starttime=req.body.start;
-   var endtime=req.body.end;
-   var slot=req.body.slot;
-   
- starttimehours=parseInt(starttime.slice(0,2));
+    var starttime=req.body.start;
+    var endtime=req.body.end;
+    var slot=req.body.slot;
+    var date=req.body.date;
 
-starttimeminute=parseInt(starttime.slice(3,5));
+  starttimehours=parseInt(starttime.slice(0,2));
+ 
+ starttimeminute=parseInt(starttime.slice(3,5));
+ 
+ sm=starttimehours*60+starttimeminute
+ 
+ 
+ endtimehours=parseInt(endtime.slice(0,2));
+ 
+ endtimeminute=parseInt(endtime.slice(3,5));
+ em=endtimehours*60+endtimeminute
+ 
+ totalminutes=em-sm
 
-sm=starttimehours*60+starttimeminute
-
-
-endtimehours=parseInt(endtime.slice(0,2));
-
-endtimeminute=parseInt(endtime.slice(3,5));
-em=endtimehours*60+endtimeminute
-
-totalminutes=em-sm
-
-loop=Math.trunc(totalminutes/slot)
-
-
-for(var i=1;i<=loop;i++)
-{
-  
- var m1=starttimeminute+i*slot;
-
-
- if(m1>60)
+ 
+ loop=Math.trunc(totalminutes/slot)
+ a=[];
+ if(starttimehours<10)
  {
-    starttimehours=starttimehours+1;
-m1=m1%60
-console.log(m1)
-
-var k=parseInt(slot);
-
-
-
-
-if(m1==0)
-{
-    m1='00'
-}
-else if(m1<10)
-{
-    m1='0'+m1
-}
+   var st='0'+starttimehours
+ }
+ else{
+    st=starttimehours
+ }
+ if(starttimeminute==0)
+ {
+    var sm='0'+starttimeminute
+ }
+ else{
+     sm=starttimeminute;
+ }
+ 
+ var b=date+"T"+st+':'+sm+':00'
 
 
 
-}
+ a.push(b);
+ for(var i=1;i<=loop;i++)
+ {
+   
+  var m1=starttimeminute+i*slot;
+ m1=m1%60;
+ slot=parseInt(slot);
+ 
+ 
+ 
+ 
+ if(m1==0)
+ {
+     m1='00'
+     starttimehours=starttimehours+1;
+ }
+ else if(m1<10)
+ {
+     m1='0'+m1
+ } 
 
-console.log(starttimehours+':'+m1);
+ if(starttimehours<10)
+ {
+     h="0"+starttimehours;
+ }
+ else{
+     h=starttimehours;
+ }
 
+
+
+
+var k=date+"T"+h+':'+m1+':00'
+
+a.push(k);
  
 
+ if(m1+slot>59)
+ {
+ starttimehours=starttimehours+1;
+ }
 
-
-
-}
-
-
-
-/* date.setMinutes(23)
-var a=[]
-for(var i=1;i<8;i++)
-{
-    var m1=i*15;
-    date.setMinutes(m1)
-    a.push(date.toString().slice(16,21));
-    //console.log( date.toString().slice(16,21))
-  
-}
-for(var i=0;i<=a.length-2;i++)
-{
-    console.log(a[i]+'-'+a[i+1]);
-}
- */
-    // db.insertslot(req.body,res);
+ }
+ for(var i=0;i<=a.length-2;i++)
+ {
+    var slot = {
+      
+        color:"green",
+          start: a[i],
+          end:a[i+1],
+          title: "available",
+          allDay:false
+      };
  
+ db.insertslot(slot,res);
+ 
+}
+
 })
+     
+     
+     
+     
+     
+     
+     
+
+    
 /* ----------------------------get All slot------------------- */
 router.get('/allslot',(req,res)=>{
 
@@ -153,12 +182,9 @@ router.get('/bookedslot',(req,res)=>{
 
 /* -------------------------------------delete Available slot------------------ */
 router.delete('/deleteslot',(req,res)=>{
-var slotid=req.body._id
-
-var slotid={
-    "_id": Objectid(slotid)
-}
-  db.deleteslot(slotid,res);
+var id=req.body._id
+slotid={"_id": Objectid(id)}
+db.deleteslot(slotid,res);
 })
 
 /* ----------------------------------------------Book Data--------------------------- */
