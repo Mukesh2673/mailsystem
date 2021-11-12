@@ -61,7 +61,7 @@ NavHeader
  async login(){
 
             var fd={'name':this.name,'email':this.email,'password':this.password,'phone':this.phone,'username':this.username}
-            await axios.post('http://localhost:1000/user/signup', fd, {
+            await axios.post('http://localhost:1100/user/signup', fd, {
           }).then((res) => {
             console.log(res.data);
 

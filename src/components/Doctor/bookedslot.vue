@@ -79,6 +79,12 @@ export default {
   methods: {
     accesspage: function () {
       let user = localStorage.getItem("user-info");
+      var name=(JSON.parse(user).name);
+      console.log(typeof name);
+      if(name)
+      {
+        console.log("ok");
+      }
       if (!user) {
         this.$router.push({ name: "login" });
         return;

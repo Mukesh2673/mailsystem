@@ -19,12 +19,15 @@ export default {
     return {
       showToggle: "none",
       showToggle2:"none",
+      showTogglebook:"none",
       starttime: "",
       allslote: "",
       selectedate:"",
       endtime:"",
       selected:"15",
       id:"",
+      usertype:"",
+      userinfo:"",
    
      
 
@@ -42,6 +45,7 @@ export default {
           center: "title",
           right: "dayGridMonth,timeGridDay,timeGridWeek,listWeek",
         },
+        scrollTime:'00:00:00',
 
         dateClick: this.handleDateClick,
         eventClick: this.handleeventClick,
@@ -58,6 +62,34 @@ export default {
     };
   },
   methods: {
+
+/* ------------------accesspage-------------------- */
+
+
+      accesspage: function (){
+      let user = localStorage.getItem("user-info");
+      var name=(JSON.parse(user));
+      this.userinfo=name
+      if(name.type=='doctor')
+      {
+      this.usertype=name.type
+      
+      }
+ 
+      if (!user) {
+        this.$router.push({ name: "login" });
+        return;
+      }
+      this.name = JSON.parse(user).name;
+      this.userinfo=JSON.parse(user)
+      this.name1 = this.name;
+    },
+
+
+
+
+
+
     handleDateClick: function (arg) {
         this.starttime=arg.dateStr.slice(11,16);
   
@@ -84,14 +116,29 @@ export default {
           this.selectedate=arg.dateStr
       }
 
+if(this.usertype=='doctor')
+{
+this.showToggle2 = "block";
 
-
-      this.showToggle2 = "block";
+ }     
 },
     handleeventClick: function (info) {
       this.id=info.event.extendedProps._id;
-      this.showToggle = "block";
+      this.starttime=info.event.start;
+      this.endtime=info.event.end;
+     
 
+
+
+
+    if(this.usertype=='doctor')
+    {
+      this.showToggle = "block";
+    }
+    else
+    {
+    this.showTogglebook = "block";
+    } 
 },
      getstarttime(event) {
       this.starttime = event.target.value;
@@ -152,9 +199,9 @@ getendtime(event){
         .then((res) => {
           this.allslote = res.data;
           this.c = true;
+          console.log(res,"jaklsjdlkjaskdjlks")
           if(res.status==200)
           {
-           console.log(res.data);
            //updating events
            this.calendarOptions.events=res.data
            this.showToggle2 = "none";
@@ -165,6 +212,23 @@ getendtime(event){
         }); 
     },
 
+
+
+      async bookslot() {
+       var sid =  { _id: this.id }
+       console.log(this.starttime);
+      var data={id:sid,uid:this.userinfo._id,start:this.starttime,end:this.endtime,email:this.userinfo.email}
+      await axios.patch("http://localhost:1100/user/bookslot",{data})
+        .then((res) => {
+            if(res.status==200){
+                 this.calendarOptions.events=res.data
+                    this.showTogglebook = "none";
+            } 
+ 
+
+        }); 
+    },
+ 
 
 
 
@@ -190,6 +254,7 @@ entime(){
 
   },
   created: function () {
+        this.accesspage();
     this.allslot();
   },
 };
@@ -240,15 +305,53 @@ entime(){
             </div>
           </div>
         </div>
-<!--    Toggle for Delete -->
 
-<div :style="{ display: showToggle2 }">
+<!-- ----------------Model for book---------------------- -->
 
+<div
+          class="modal "
+          id="exampleModal"
+          tabindex="-1"
+          role="dialog"
+          aria-labelledby="exampleModalLabel"
+          aria-hidden="true"
+          :style="{ display: showTogglebook  }"
 
+        >
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header text-right">
+               
+                <button
+                  type="button"
+                  class="close"
+                  data-dismiss="modal"
+                  aria-label="Close"
+                  @click="showTogglebook = 'none'"
+                  style="margin-left:90%; background-color:blue;border:none;color:white; width:80px"
+                  
+                >
+                  <span aria-hidden="true" style="font-size:20px">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <h5 class="modal-title w-100" id="exampleModalLabel">
+                  Are You Sure Book This Slot
+                  
+                </h5>
+              </div>
+              <div class="modal-footer">
+              <button type="button" class="btn btn-primary" @click="bookslot">Yes</button>
+                <button type="button" class="btn btn-primary" @click="showTogglebook = 'none'">No</button>
+              </div>
+            </div>
+          </div>
+        </div>
+<!-- ------------------------------------------------------------------------ -->
 <!-- Modal to Add Events-->
 
+<div :style="{ display: showToggle2 }">
 <div class="modal fade show" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-
  aria-labelledby="staticBackdropLabel" aria-hidden="true" style="display:block">
   <div class="modal-dialog modal-md mt-12">
     <div class="modal-content">
